@@ -7,7 +7,8 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "debug": "node --inspect=127.0.0.1:9229 ./node_modules/strapi/bin/strapi.js develop"
   },
   "devDependencies": {},
   "dependencies": {

@@ -1,0 +1,60 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/signup",
+      "handler": "Auth.signUp",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/ssi/signup",
+      "handler": "Auth.ssiSignUpRequest",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/ssi/signup",
+      "handler": "Auth.ssiSignUp",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/ssi/signin",
+      "handler": "Auth.ssiSignInRequest",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/ssi/signin",
+      "handler": "Auth.ssiSignIn",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/protected",
+      "handler": "Auth.protectedRoute",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/unprotected",
+      "handler": "Auth.unprotectedRoute",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}
