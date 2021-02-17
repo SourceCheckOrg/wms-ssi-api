@@ -17,8 +17,6 @@ services:
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - VIRTUAL_PORT=${VIRTUAL_PORT}
-    ports:
-      - 1337:1337
     depends_on:
       - wms-redis
       - wms-database
@@ -31,8 +29,6 @@ services:
     environment:
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-    ports:
-      - 3306:3306
     volumes:
       - ./data/db:/var/lib/mysql
 
@@ -40,8 +36,6 @@ services:
     image: redis
     container_name: sc-wms-redis
     restart: unless-stopped
-    ports:
-      - 6379:6379
       
 networks:
   default:
