@@ -27,11 +27,12 @@ module.exports = async () => {
     console.log("Setup socket.io");
     const frontendHost = strapi.config.get("frontend.host");
     const frontendPort = strapi.config.get("frontend.port");
-    console.log("Frontend url:", `${frontendHost}:${frontendPort}`);
+    const frontendUrl = frontendPort !== 80 ? `${frontendHost}:${frontendPort}` : frontendHost;
+    console.log("Frontend url:", frontendUrl);
 
     var io = require("socket.io")(strapi.server, {
       cors: {
-        origin: `${frontendHost}:${frontendPort}`,
+        origin: frontendUrl,
         methods: ["GET", "POST"],
       },
     });
