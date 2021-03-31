@@ -11,7 +11,7 @@ module.exports = ({ env }) => {
   const origin = [frontendUrl, previewUrl]
   
   if (env('NODE_ENV') === 'development') {
-    origins.push('http://localhost:1337');
+    origin.push('http://localhost:1337');
   }
 
   return {
