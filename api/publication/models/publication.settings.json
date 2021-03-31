@@ -2,7 +2,8 @@
   "kind": "collectionType",
   "collectionName": "publications",
   "info": {
-    "name": "Publication"
+    "name": "Publication",
+    "description": ""
   },
   "options": {
     "increments": true,
@@ -10,13 +11,10 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "publisher": {
-      "type": "string"
-    },
     "title": {
       "type": "string"
     },
-    "account": {
+    "slug": {
       "type": "string"
     },
     "pdf_raw": {
@@ -27,6 +25,15 @@
       ],
       "plugin": "upload",
       "required": false
+    },
+    "royalty_structure": {
+      "model": "royalty-structure",
+      "via": "publications"
+    },
+    "owner": {
+      "plugin": "users-permissions",
+      "model": "user",
+      "via": "publications"
     }
   }
 }

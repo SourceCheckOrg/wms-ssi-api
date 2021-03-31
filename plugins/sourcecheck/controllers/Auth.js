@@ -3,22 +3,27 @@
 /**
  * SourceCheck Authentication controller (Auth.js)
  *
- * @description: Contains several actions used to sign up and sign in users using SSI.
+ * @description: Contains several actions used to sign up and sign in users using SSI
  */
 
 const _ = require('lodash');
-const { DateTime } = require("luxon");
+const { DateTime } = require('luxon');
 const { sanitizeEntity } = require('strapi-utils');
 const DIDKit = require('didkit');
 
 const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const formatError = error => [
-  { messages: [{ id: error.id, message: error.message, field: error.field }] },
-];
+
+const formatError = error => [{ messages: [{ id: error.id, message: error.message, field: error.field }]}];
 
 module.exports = {
 
-  // TODO action to sign user out
+  // TODO implement this action
+  signOut: async(ctx) => {
+    ctx.send({
+      result: 'Success',
+      message: 'Sign out!',
+    });
+  },
 
   /**
    * Action used to process a sign up request
@@ -26,7 +31,7 @@ module.exports = {
    */
   signUp: async (ctx) => {
 
-    const scAuthService = strapi.plugins["sourcecheck"].services.auth;
+    const scAuthService = strapi.plugins['sourcecheck'].services.auth;
     
     const pluginStore = await strapi.store({
       environment: '',
@@ -48,7 +53,7 @@ module.exports = {
 
     const params = {
       ..._.omit(ctx.request.body, ['confirmed', 'confirmationToken', 'resetPasswordToken']),
-      provider: 'local', // TODO check if we can use sourcecheck instead of local here
+      provider: 'local', // TODO check if 'sourcecheck' should be used instead of 'local'
     };
 
     // Email is required.
@@ -77,6 +82,8 @@ module.exports = {
       );
     }
 
+    params.role = role.id;
+
     // Check if the provided email is valid or not.
     const isEmail = emailRegExp.test(params.email);
 
@@ -92,25 +99,13 @@ module.exports = {
       );
     }
 
-    params.role = role.id;
-    
     // Check if there is already an user with the provided email
     const user = await strapi.query('user', 'users-permissions').findOne({
       email: params.email,
     });
 
-    if (user && user.provider === params.provider) {
-      return ctx.badRequest(
-        null,
-        formatError({
-          id: 'Auth.form.error.email.taken',
-          message: 'Email is already taken.',
-        })
-      );
-    }
-
-    if (user && user.provider !== params.provider && settings.unique_email) {
-      return ctx.badRequest(
+    if (user && user.provider === params.provider && settings.unique_email) {
+      return ctx.badRequest( 
         null,
         formatError({
           id: 'Auth.form.error.email.taken',
@@ -129,26 +124,23 @@ module.exports = {
         model: strapi.query('user', 'users-permissions').model,
       });
 
-      if (settings.email_confirmation) {
-        try {
-          await scAuthService.sendConfirmationEmail(user);
-        } catch (err) {
-          return ctx.badRequest(null, err);
-        }
-
-        return ctx.send({ user: sanitizedUser });
+      try {
+        await scAuthService.sendConfirmationEmail(user);
+      } catch (err) {
+        return ctx.badRequest(null, err);
       }
 
-      return ctx.send({
-        user: sanitizedUser,
-      });
+      return ctx.send({ user: sanitizedUser });
     } catch (err) {
       const adminError = _.includes(err.message, 'username')
         ? {
             id: 'Auth.form.error.username.taken',
             message: 'Username already taken',
           }
-        : { id: 'Auth.form.error.email.taken', message: 'Email already taken' };
+        : { 
+            id: 'Auth.form.error.email.taken', 
+            message: 'Email already taken' 
+        };
 
       ctx.badRequest(null, formatError(adminError));
     }
@@ -159,13 +151,8 @@ module.exports = {
    */
   ssiSignUpRequest: async (ctx) => {
     const { confirmationToken } = ctx.request.query
-    console.log("ssiSignUpRequest - confirmationToken: ", confirmationToken);
-    
     const key = strapi.config.get('ssi.issuerKey');
-    console.log("ssiSignUpRequest - key: ", key);
-    
     const issuer = DIDKit.keyToDID('key', JSON.parse(key));
-    console.log("ssiSignUpRequest - issuer: ", issuer);
     
     // TODO check if there is a pending user with the given confirmation token
     const user = await strapi.query('user', 'users-permissions').findOne({ confirmationToken });
@@ -177,13 +164,13 @@ module.exports = {
     const expires = now.plus({ days: 1 }).toUTC();
 
     let cred = {
-      type: "CredentialOffer",
+      type: 'CredentialOffer',
       credentialPreview: {
-        "@context": [
-          "https://www.w3.org/2018/credentials/v1",
-          "https://www.w3.org/2018/credentials/examples/v1",
+        '@context': [
+          'https://www.w3.org/2018/credentials/v1',
+          'https://www.w3.org/2018/credentials/examples/v1',
         ],
-        type: ["VerifiableCredential", "Person"],
+        type: ['VerifiableCredential', 'Person'],
         issuer,
         issuanceDate,
         expirationDate,
@@ -205,10 +192,7 @@ module.exports = {
   ssiSignUp: async (ctx) => {
     const { confirmationToken } = ctx.request.query
     const subjectId = ctx.request.body.subject_id;
-    console.log('ssiSignUp - confirmationToken: ', confirmationToken);
-    console.log('ssiSignUp - subjectId: ', subjectId);
-        
-    const userService = strapi.plugins["users-permissions"].services.user;
+    const userService = strapi.plugins['users-permissions'].services.user;
         
     // Check if there is pending user associated with the confirmation token
     const user = await strapi.query('user', 'users-permissions').findOne({ 
@@ -230,44 +214,36 @@ module.exports = {
 
       // Generate a jwt token for authentication
       jwt = strapi.plugins['users-permissions'].services.jwt.issue(_.pick(user, ['id']));
-      console.log('ssiSignUp - jwt: ', jwt);
     }
 
     // Get socket id and send result to user's web app
     strapi.redis.get(confirmationToken, (err, socketId) => {
-      console.log('ssiSignUp - socketId: ', socketId);
-
       if (!err && jwt) {
-        strapi.io.to(socketId).emit("jwt", jwt);
+        strapi.io.to(socketId).emit('jwt', jwt);
       }
     });
 
     const key = JSON.parse(strapi.config.get('ssi.issuerKey'));
     const issuer = DIDKit.keyToDID('key', key);
     const verificationMethod = DIDKit.keyToVerificationMethod('key', key);
-    console.log('ssiSignUp - issuer: ', issuer);
-    console.log('ssiSignUp - verificationMethod: ', verificationMethod);
     
     const now = DateTime.now();
     const issuanceDate = now.toISO()
     const expirationDate = now.plus({ years: 1 }).toISO();
-    const proofPurpose = "assertionMethod";
-    console.log('ssiSignUp - issuanceDate: ', issuanceDate);
-    console.log('ssiSignUp - expirationDate: ', expirationDate);
+    const proofPurpose = 'assertionMethod';
 
     let unsignedCred = {
-      "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://www.w3.org/2018/credentials/examples/v1",
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        'https://www.w3.org/2018/credentials/examples/v1',
       ],
-      type: ["VerifiableCredential", "Person"],
+      type: ['VerifiableCredential', 'Person'],
       issuer,
       issuanceDate,
       expirationDate,
       credentialSubject: { id: subjectId },
     };
     let signedCred = DIDKit.issueCredential(unsignedCred, { proofPurpose, verificationMethod }, key);
-    console.log('ssiSignUp - signedCred',signedCred);
     
     ctx.body = JSON.stringify(signedCred);
     ctx.type = 'application/ld+json';
@@ -279,21 +255,20 @@ module.exports = {
    */
   ssiSignInRequest: async (ctx) => {
     const { challenge } = ctx.request.query
-    console.log("ssiSignUpRequest - challenge: ", challenge);
     let vpRequest = {
-      "type": "VerifiablePresentationRequest",
-      "query": [
+      'type': 'VerifiablePresentationRequest',
+      'query': [
         {
-          "type": "QueryByExample",
-          "credentialQuery": [
+          'type': 'QueryByExample',
+          'credentialQuery': [
             {
-              "reason": "Sign-up to SourceCheck.org",
-              "example": {
-                "@context": [
-                  "https://www.w3.org/2018/credentials/v1", 
-                  "https://www.w3.org/2018/credentials/examples/v1"
+              'reason': 'Sign-up to SourceCheck.org',
+              'example': {
+                '@context': [
+                  'https://www.w3.org/2018/credentials/v1', 
+                  'https://www.w3.org/2018/credentials/examples/v1'
                 ],
-                "type": "Person"
+                'type': 'Person'
               }
             }
           ]
@@ -311,14 +286,11 @@ module.exports = {
    * If the VP is valid and the DID is already associated with an active user, sends a JWT token to the user's web app 
    */
   ssiSignIn: async (ctx) => {
-    console.log('ssiSignIn');
     const { challenge } = ctx.request.query;
     const presentation = JSON.parse(ctx.request.body.presentation);
-    console.log('ssiSignIn - presentation: ', presentation);
     
     //const res = DIDKit.verifyPresentation(presentation, { challenge });
     const res = DIDKit.verifyPresentation(presentation, { challenge: 'abc' });
-    console.log('ssiSignIn - res', res)
     const did = presentation.verifiableCredential.credentialSubject.id
     
     const query = { 
@@ -328,8 +300,8 @@ module.exports = {
     const user = await strapi.query('user', 'users-permissions').findOne(query);
 
     // Check if user is registered
-    // TODO send error message through socket.it
     if (!user) {
+      // TODO send error message through socket.it
       return ctx.badRequest(
         null,
         formatError({
@@ -347,12 +319,10 @@ module.exports = {
 
     // Get socket id and send result to user web app
     strapi.redis.get(challenge, (err, socketId) => {
-      console.log('ssiSignUp - socketId: ', socketId);
-
       if (!err) {
-        strapi.io.to(socketId).emit("auth", {
-          jwt,
-          user: sanitizedUser
+        strapi.io.to(socketId).emit('auth', { 
+          jwt, 
+          user: sanitizedUser 
         });
       }
     });
@@ -365,27 +335,13 @@ module.exports = {
 
   protectedRoute: async (ctx) => {
     ctx.send({
-      message: 'Protected Route'
+      message: 'Protected Route!'
     });
   },
 
   unprotectedRoute: async (ctx) => {
-
-    const key = DIDKit.generateEd25519Key();
-    console.log('key', key);
-
-    const issuer = DIDKit.keyToDID('key', JSON.stringify(key));
-    console.log('issuer', issuer);
-
-    const now = DateTime.now();
-    const issuanceDate = now.toUTC();
-    const expirationDate = now.plus({ years: 1 }).toUTC();
-
     ctx.send({
-      issuanceDate,
-      expirationDate,
-      message: 'Unprotected Route'
+      message: 'Unprotected Route!',
     });
   }
-
 };

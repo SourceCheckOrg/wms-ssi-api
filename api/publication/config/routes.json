@@ -25,6 +25,14 @@
       }
     },
     {
+      "method": "GET",
+      "path": "/publications/preview",
+      "handler": "publication.preview",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "POST",
       "path": "/publications",
       "handler": "publication.create",

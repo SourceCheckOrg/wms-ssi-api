@@ -1,4 +1,5 @@
 {
+  "kind": "collectionType",
   "collectionName": "users-permissions_user",
   "info": {
     "name": "user",
@@ -64,6 +65,18 @@
       "unique": true,
       "configurable": true,
       "required": false
+    },
+    "royalty_structures": {
+      "via": "owner",
+      "collection": "royalty-structure"
+    },
+    "publications": {
+      "via": "owner",
+      "collection": "publication"
+    },
+    "publisher": {
+      "via": "owner",
+      "model": "publisher"
     }
   }
 }

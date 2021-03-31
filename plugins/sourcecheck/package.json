@@ -1,21 +1,21 @@
 {
   "name": "strapi-plugin-sourcecheck",
-  "version": "0.0.0",
-  "description": "This is the description of the plugin.",
+  "version": "0.0.1",
+  "description": "Enables authentication in Strapi using Verifiable Credentials and Verifiable Presentations",
   "strapi": {
-    "name": "sourcecheck",
+    "name": "Sourcecheck SSI Auth",
     "icon": "plug",
-    "description": "Description of sourcecheck plugin."
+    "description": "Enables authentication in Strapi using Verifiable Credentials and Verifiable Presentations."
   },
   "dependencies": {},
   "author": {
-    "name": "A Strapi developer",
-    "email": "",
-    "url": ""
+    "name": "Jefferson Sofarelli",
+    "email": "jmsofarelli@protonmail.com",
+    "url": "https://github.com/jmsofarelli"
   },
   "maintainers": [
     {
-      "name": "A Strapi developer",
+      "name": "",
       "email": "",
       "url": ""
     }
