@@ -18,16 +18,16 @@
     },
     {
       "method": "GET",
-      "path": "/publications/:id",
-      "handler": "publication.findOne",
+      "path": "/publications/preview",
+      "handler": "publication.preview",
       "config": {
         "policies": []
       }
     },
     {
       "method": "GET",
-      "path": "/publications/preview",
-      "handler": "publication.preview",
+      "path": "/publications/:id",
+      "handler": "publication.findOne",
       "config": {
         "policies": []
       }
