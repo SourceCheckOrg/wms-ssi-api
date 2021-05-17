@@ -2,8 +2,9 @@ version: '3'
 
 services:
   wms-api:
-    build: .
-    image: sourcecheck/wms-api
+    build: 
+      context: ../
+    image: sourcecheck/wms-ssi-api
     container_name: sc-wms-api
     environment:
       - NODE_ENV=${NODE_ENV}
@@ -30,13 +31,13 @@ services:
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     volumes:
-      - ./data/db:/var/lib/mysql
+      - ../data/db:/var/lib/mysql
 
   wms-redis:
     image: redis
     container_name: sc-wms-redis
     restart: unless-stopped
-      
+
 networks:
   default:
     external:

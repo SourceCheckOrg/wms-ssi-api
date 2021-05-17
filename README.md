@@ -67,19 +67,6 @@ content of the file `did.txt` will be used as the environment variable
 `ISSUER_DID`. These values should be set in the file `.env` of this repository.
 More information on that below. 
 
-Build DIDKit Node library (from didkit ROOT directory):
-```
-$ make -C lib ../target/test/node.stamp
-```
-
-At the moment, the DIDKit Node library used to build this prototype is a
-nightly; until the next stable version is pushed to NPM, it should be linked
-locally after being built by the command above as follows:
-```
-$ cd lib/node
-$ npm link
-```
-
 ### ngrok
 
 The API server should be visible through a public URL so Spruce's Credible
@@ -176,14 +163,16 @@ Some initial permissions should be configured manually.
 From the administration panel, click on "Settings"
 * Under USERS & PERMISSIONS PLUGIN, click on "Roles"
 * Click on the "Edit" button (Pencil) for the **Authenticated** role
-    * Under Permissions/Publication, check `create`, `delete`, `find`,
-      `findone`, `preview` and `update permissions`
-    * Under Permissions/Publisher, check `create`, `find`, `findone` and `update
+    * Under Permissions/Application/Publication, check `create`, `delete`, `find`,
+      `findone`, `preview`, `publish`, `update` and `verify`
+    * Under Permissions/Application/Publisher, check `create`, `find`, `findone` and `update
       permissions`
-    * Under Permissions/Royalty-Structure, check `create`, `delete`, `find`,
+    * Under Permissions/Application/Royalty-Structure, check `create`, `delete`, `find`,
       `findone` and `update`
 * Under USERS & PERMISSIONS PLUGIN, click on "Roles" again
 * Click on the "Edit" button (Pencil) for the **Public** role
-    * Under Permissions/Publications, check `preview`
+    * Under Permissions/Application/Publications, check `preview` and `verify`
+    * Under Permissions/SourceCheck/Auth, check `signup`, `ssisignin`, `ssisigninrequest`, `ssisignup`, `ssisignuprequest`
+    * Under Permissions/SourceCheck/PublisherCredentials, check `publishercredentialissuance`, `publishercredentialoffer`, `publisherpresentationprocessing`, `publisherpresentationrequest`
 
 Congratulations! The API server is properly configured, up and running!
