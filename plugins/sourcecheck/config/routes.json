@@ -55,6 +55,38 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/ssi/publisher/vc",
+      "handler": "PublisherCredentials.publisherCredentialOffer",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/ssi/publisher/vc",
+      "handler": "PublisherCredentials.publisherCredentialIssuance",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/ssi/publisher/vp",
+      "handler": "PublisherCredentials.publisherPresentationRequest",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/ssi/publisher/vp",
+      "handler": "PublisherCredentials.publisherPresentationProcessing",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

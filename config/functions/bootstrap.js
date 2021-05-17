@@ -47,11 +47,60 @@ module.exports = async () => {
         console.log("User disconnected");
       });
 
-      // Associate a socket with a client token
+      // Associate a socket with a client token (expiration time: 10min)
       socket.on("client-token-sub", (token) => {
         console.log("client-token-sub", token);
-        strapi.redis.set(token, socket.id);
+        strapi.redis.set(token, socket.id, 'EX', 600);
       });
+
+      // Associate a socket with a "publisher credential offer" (expiration time: 5min)
+      socket.on("publisher-cred-offer-sub", (uuid) => {
+        console.log("publisher-cred-offer-sub", uuid);
+        strapi.redis.set(uuid, socket.id, 'EX', 300);
+      });
+
+      // Remove from Redis key associated with "publisher credential offer"
+      socket.on("publisher-cred-offer-unsub", (uuid) => {
+        console.log("publisher-cred-offer-unsub", uuid);
+        strapi.redis.del(uuid);
+      });
+
+      // Associate a socket with a "publisher presentation request" (expiration time: 5min)
+      socket.on("publisher-pres-req-sub", (uuid) => {
+        console.log("publisher-pres-req-sub ", uuid);
+        strapi.redis.set(uuid, socket.id, 'EX', 300);
+      });
+
+      // Remove from Redis key associated with "publisher presentation request"
+      socket.on("publisher-pres-req-unsub", (uuid) => {
+        console.log("publisher-pres-req-unsub", uuid);
+        strapi.redis.del(uuid);
+      });
+
+      // Associate a socket with a "royalties structure credential offer" (expiration time: 5min)
+      socket.on("royalties-cred-offer-sub", (uuid) => {
+        console.log("royalties-cred-offer-sub", uuid);
+        strapi.redis.set(uuid, socket.id, 'EX', 300);
+      });
+
+      // Remove from Redis key associated with "royalties structure credential offer"
+      socket.on("royalties-cred-offer-unsub", (uuid) => {
+        console.log("royalties-cred-offer-unsub", uuid);
+        strapi.redis.del(uuid);
+      });
+
+      // Associate a socket with a "royalties structure presentation request" (expiration time: 5min)
+      socket.on("royalties-pres-req-sub", (uuid) => {
+        console.log("royalties-pres-req-sub ", uuid);
+        strapi.redis.set(uuid, socket.id, 'EX', 300);
+      });
+
+      // Remove from Redis key associated with "royalties structure presentation request"
+      socket.on("royalties-pres-req-unsub", (uuid) => {
+        console.log("royalties-pres-req-unsub", uuid);
+        strapi.redis.del(uuid);
+      });
+
     });
 
     // Register socket.io inside strapi main object to use it globally

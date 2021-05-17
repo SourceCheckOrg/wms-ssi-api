@@ -9,7 +9,7 @@
 const _ = require('lodash');
 const { DateTime } = require('luxon');
 const { sanitizeEntity } = require('strapi-utils');
-const DIDKit = require('didkit');
+const DIDKit = require('@spruceid/didkit');
 
 const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -289,8 +289,8 @@ module.exports = {
     const { challenge } = ctx.request.query;
     const presentation = JSON.parse(ctx.request.body.presentation);
     
-    //const res = DIDKit.verifyPresentation(presentation, { challenge });
-    const res = DIDKit.verifyPresentation(presentation, { challenge: 'abc' });
+    // TODO Check result of verification
+    const res = DIDKit.verifyPresentation(presentation, { challenge });
     const did = presentation.verifiableCredential.credentialSubject.id
     
     const query = { 

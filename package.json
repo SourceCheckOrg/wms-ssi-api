@@ -12,10 +12,12 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "didkit": "^0.1.0",
+    "@spruceid/didkit": "0.2.2",
+    "js-sha3": "^0.8.0",
     "knex": "<0.20.0",
     "luxon": "^1.26.0",
     "mysql": "latest",
+    "pdf-lib": "^1.16.0",
     "redis": "^3.0.2",
     "socket.io": "^3.1.1",
     "strapi": "3.4.6",

@@ -25,6 +25,22 @@
       }
     },
     {
+      "method": "POST",
+      "path": "/publications/verify",
+      "handler": "publication.verify",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/publications/publish/:id",
+      "handler": "publication.publish",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "GET",
       "path": "/publications/:id",
       "handler": "publication.findOne",
